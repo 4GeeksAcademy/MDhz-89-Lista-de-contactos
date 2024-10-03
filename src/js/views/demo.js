@@ -30,8 +30,10 @@ export const Demo = () => {
 									<p className="">{item.phone} </p>
 									<p className="">{item.email} </p>
 									<p className="">{item.adress} </p>
+									
+									
 								</div>
-								<button onClick={()=>deleteContact(index)}>Elimiar</button>
+								<button onClick={()=>actions.removerContactos(item.id)}>Elimiar</button>
 							{// Conditional render example
 							// Check to see if the background is orange, if so, display the message
 							item.background === "orange" ? (
