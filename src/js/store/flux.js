@@ -42,9 +42,34 @@ const getState = ({ getStore, getActions, setStore }) => {
 					return false
 				}
 			},
+			EditContact: async (idToEdit, nombre, telefono, direccion, email) => {
+				console.log(nombre, telefono, direccion, email);
+				try {
+					const response = await fetch(`https://playground.4geeks.com/contact/agendas/Martin/contacts/${idToEdit}`, {
+						method: "PUT",
+						headers: { "Content-Type": "application/json" },
+						body: JSON.stringify({
+							"name": nombre,
+							"phone": telefono,
+							"email": email,
+							"address": direccion,
+						})
+					});
+					
+					if (!response.ok) {
+						throw new Error("Error al editar el contacto");
+					}
+					
+					return true; 
+				} catch (error) {
+					console.error("Error:", error);
+					return false; 
+				}
+			},
+			
 
 
-			//https://playground.4geeks.com/contact/agendas/Martin/contacts		
+			
 
 			obtenerContactos: async () => {
 				try {
@@ -65,22 +90,32 @@ const getState = ({ getStore, getActions, setStore }) => {
 					return false
 				}
 			},
-			removerContactos: (indexToDelete) => {
-				console.log("flux" + indexToDelete)
+			removerContactos: (idToDelete) => {
+				console.log("Eliminar contacto con ID: " + idToDelete);
 				const store = getStore();
-				//store.contacts = []
-
+			
 				const requestOptions = {
 					method: "DELETE",
-					redirect: "follow"
-				  };
-				  
-				  fetch("https://playground.4geeks.com/contact/agendas/Martin/contacts/"+ indexToDelete, requestOptions)
-					.then((response) => response.text())
-					.then((result) => console.log(result))
+					redirect: "follow",
+				};
+			
+				fetch(`https://playground.4geeks.com/contact/agendas/Martin/contacts/${idToDelete}`, requestOptions)
+					.then((response) => {
+						if (!response.ok) {
+							throw new Error("Error al eliminar el contacto");
+						}
+						
+						const updatedContacts = store.contactos.filter((contacto) => contacto.id !== idToDelete);
+						setStore({ contactos: updatedContacts }); // Actualiza el estado
+					})
+					.catch((error) => {
+						console.error("Error:", error);
+					});
+			
+			
 
 				
-				//setStore({ contactos: store.contactos.filter( (contacto,index)=> contacto.id != indexToDelete) });
+				
 			},
 		}
 	};
